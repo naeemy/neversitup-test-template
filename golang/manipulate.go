@@ -1,7 +1,8 @@
 package main
 
 import (
-	"slices"
+	"math"
+	"strconv"
 	"strings"
 )
 
@@ -13,53 +14,49 @@ func Manipulate(text string) []string {
 	}
 }
 
-func reverse(text string) string {
-	textArr := strings.Split(text, "")
-	for i, j := 0, len(textArr)-1; i < j; i, j = i+1, j-1 {
-		textArr[i], textArr[j] = textArr[j], textArr[i]
+func dedup(text string) string {
+	m := make(map[string]bool)
+
+	for _, ch := range text {
+		m[string(ch)] = true
 	}
 
-	return strings.Join(textArr, "")
-}
-
-func popAt(text []string, at int) (string, []string) {
-	result := text[at]
-
-	return result, append(text[:at], text[at+1:]...)
-}
-
-func insertAt(text []string, at int, ch string) []string {
-	if at == 0 {
-		return append([]string{ch}, text...)
-	} else if at > len(text) {
-		return append(text, ch)
-	} else {
-		return append(text[:at], append([]string{ch}, text[at:]...)...)
-	}
-
-}
-
-func shuffle(text string) []string {
 	result := []string{}
-	var store map[string]bool = make(map[string]bool)
 
-	for i := 0; i < len(text); i++ {
-		for j := 0; j < len(text); j++ {
-			var root string
-			tmp := strings.Split(text, "")
-			root, tmp = popAt(tmp, i)
-			tmp = insertAt(tmp, j, root)
-
-			store[strings.Join(tmp, "")] = true
-			store[reverse(strings.Join(tmp, ""))] = true
-		}
-	}
-
-	for k := range store {
+	for k, _ := range m {
 		result = append(result, k)
 	}
 
-	slices.Sort(result)
+	return strings.Join(result, "")
+}
+
+func shuffle(text string) []string {
+	m := make(map[string]bool)
+	result := []string{}
+
+	for number := range int(math.Pow(float64(len(text)), float64(len(text)))) {
+		strNum := strconv.FormatInt(int64(number), len(text))
+
+		for len(strNum) < len(text) {
+
+			strNum = "0" + strNum
+		}
+
+		if len(dedup(strNum)) == len(text) {
+			composedStr := []string{}
+			for _, ch := range strNum {
+				i, _ := strconv.Atoi(string(ch))
+				composedStr = append(composedStr, string(text[int(i)]))
+			}
+
+			m[strings.Join(composedStr, "")] = true
+		}
+
+	}
+
+	for key := range m {
+		result = append(result, key)
+	}
 
 	return result
 }
